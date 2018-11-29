@@ -1,0 +1,151 @@
+package centipede;
+import java.awt.Graphics;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.swing.*;
+
+public class Board {
+	private static final String FONT_NAME = "Georgia";
+
+    // font of the numbers of the tiles
+
+    private Tile[] myTiles;
+
+    private GamePlay gameplay;
+
+
+    // =========================================================================
+    // Grid
+    // =========================================================================
+
+    public GameGrid( GamePlay myScene )
+    {
+        gameplay = myScene;
+
+        // scene.resetGame();
+        resetGrid();
+    }
+
+
+    /**
+     * Returns location of tile
+     * 
+     * @param x
+     * @param y
+     * @return Tile
+     */
+    private Tile tileLocation( int x, int y )
+    {
+        return myTiles[x + y * 4];
+    }
+
+
+    /**
+     * Returns the array of tiles
+     * 
+     * @return Tile[]
+     */
+    public Tile[] getGrid()
+    {
+        return myTiles;
+    }
+
+
+    /**
+     * Resets the grid to have empty tiles, creates two new tiles
+     */
+    public void resetGrid()
+    {
+        myTiles = new Tile[4 * 4];
+        for ( int i = 0; i < myTiles.length; i++ )
+        {
+            myTiles[i] = new Tile();
+        }
+        addTile();
+        addTile();
+    }
+
+
+    /**
+     * Adds a tile into the available spaces in the grid
+     */
+    private void addTile()
+    {
+        List<Tile> list = availableSpace();
+        if ( !availableSpace().isEmpty() )
+        {
+            int index = (int)( Math.random() * list.size() ) % list.size();
+            Tile emptyTile = list.get( index );
+            if ( Math.random() < 0.9 )
+            {
+                emptyTile.value = 2;
+            }
+            else
+            {
+                emptyTile.value = 4;
+            }
+        }
+    }
+
+
+    /**
+     * Returns a list of the available spaces left in the grid
+     * 
+     * @return list of spaces
+     */
+    private List<Tile> availableSpace()
+    {
+        final List<Tile> list = new ArrayList<Tile>( 16 );
+        for ( Tile t : myTiles )
+        {
+            if ( t.isEmpty() )
+            {
+                list.add( t );
+            }
+        }
+        return list;
+    }
+
+
+    /**
+     * Boolean to check if the grid is full or not
+     * 
+     * @return boolean for true or false
+     */
+    private boolean isFull()
+    {
+        return availableSpace().size() == 0;
+    }
+
+
+    /**
+     * Boolean to see if there are any available moves left
+     * 
+     * @return true or false if there are any moves
+     */
+    public boolean canMove()
+    {
+        if ( !isFull() )
+        {
+            return true;
+        }
+        // iterates through the entire grid to check the free space
+        for ( int x = 0; x < 4; x++ )
+        {
+            for ( int y = 0; y < 4; y++ )
+            {
+                Tile t = tileLocation( x, y );
+                if ( ( x < 3 && t.value == tileLocation( x + 1, y ).value )
+                    || ( ( y < 3 ) && t.value == tileLocation( x, y + 1 ).value ) )
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+}
