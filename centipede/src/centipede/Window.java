@@ -18,13 +18,12 @@ public class Window {
         myFrame.setDefaultCloseOperation( WindowConstants.EXIT_ON_CLOSE );
         myFrame.setSize( 340, 400 );
         myFrame.setResizable( true );
-        myFrame.setBackground(Color.RED);
 
         //myFrame.add( new GamePlay() );
-        //myFrame.add(new Board());
 
         myFrame.setLocationRelativeTo( null );
         myFrame.setVisible( true );
+        
     }
     
     Runtime runtime = Runtime.getRuntime();
