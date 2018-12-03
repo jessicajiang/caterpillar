@@ -174,3 +174,26 @@ Java Model Exception: Java Model Status [Unknown javadoc format for png {key=Lsu
 	at org.eclipse.jface.text.TextViewerHoverManager$4.run(TextViewerHoverManager.java:166)
 !SUBENTRY 1 org.eclipse.jdt.core 4 1009 2018-12-01 19:11:20.484
 !MESSAGE Unknown javadoc format for png {key=Lsun/net/www/content/image/png;} [in png.class [in sun.net.www.content.image [in /Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/lib/rt.jar]]]
+
+!ENTRY org.eclipse.core.jobs 4 2 2018-12-02 18:56:22.238
+!MESSAGE An internal error occurred during: "Launching SpaceInvaders".
+!STACK 0
+java.lang.IllegalStateException: CONSTANT_info: invalid tag value [18]
+	at com.vladium.jcd.cls.constant.CONSTANT_info.new_CONSTANT_info(CONSTANT_info.java:103)
+	at com.vladium.jcd.parser.ClassDefParser$classParser.constant_pool(ClassDefParser.java:168)
+	at com.vladium.jcd.parser.ClassDefParser$classParser.class_table(ClassDefParser.java:109)
+	at com.vladium.jcd.parser.ClassDefParser.parseClass(ClassDefParser.java:56)
+	at com.vladium.emma.instr.InstrProcessorST.handleFile(InstrProcessorST.java:468)
+	at com.vladium.util.IPathEnumerator$Factory$PathEnumerator.enumeratePathDir(IPathEnumerator.java:193)
+	at com.vladium.util.IPathEnumerator$Factory$PathEnumerator.enumeratePathDir(IPathEnumerator.java:177)
+	at com.vladium.util.IPathEnumerator$Factory$PathEnumerator.enumerate(IPathEnumerator.java:97)
+	at com.vladium.emma.instr.InstrProcessorST._run(InstrProcessorST.java:715)
+	at com.vladium.emma.Processor.run(Processor.java:54)
+	at com.mountainminds.eclemma.internal.core.instr.ClassFiles.instrument(ClassFiles.java:151)
+	at com.mountainminds.eclemma.internal.core.launching.CoverageLaunchInfo.instrument(CoverageLaunchInfo.java:100)
+	at com.mountainminds.eclemma.core.launching.CoverageLauncher.launch(CoverageLauncher.java:182)
+	at org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:883)
+	at org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:739)
+	at org.eclipse.debug.internal.ui.DebugUIPlugin.buildAndLaunch(DebugUIPlugin.java:1039)
+	at org.eclipse.debug.internal.ui.DebugUIPlugin$8.run(DebugUIPlugin.java:1256)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)

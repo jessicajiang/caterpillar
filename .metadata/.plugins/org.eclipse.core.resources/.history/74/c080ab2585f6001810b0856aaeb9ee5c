@@ -66,8 +66,8 @@ public class Sprite {
     	return direction;
     }
     
-    public void setDirection(int direction) {
-    	this.direction = direction;
+    public int setDirection(int direction) {
+    	this.direction == direction;
     }
 
     public void setDying(boolean dying) {

@@ -291,8 +291,7 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
 
         // bombs
         Random generator = new Random();
-        
-        
+
 //        for (Alien alien: aliens) {
 //
 //            int shot = generator.nextInt(15);

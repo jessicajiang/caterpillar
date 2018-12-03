@@ -61,14 +61,6 @@ public class Sprite {
     
         return x;
     }
-    
-    public int getDirection() {
-    	return direction;
-    }
-    
-    public void setDirection(int direction) {
-    	this.direction = direction;
-    }
 
     public void setDying(boolean dying) {
     

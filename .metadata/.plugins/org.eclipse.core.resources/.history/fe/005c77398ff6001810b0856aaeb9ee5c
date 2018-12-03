@@ -119,9 +119,8 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
         if (player.isVisible()) {
         	Point p = MouseInfo.getPointerInfo().getLocation();
         	SwingUtilities.convertPointFromScreen(p, this);
-        	player.setX((int)p.getX());
-        	player.setY((int)p.getY());
-            g.drawImage(player.getImage(), (int)p.getX(), (int)p.getY(), this);
+            //g.drawImage(player.getImage(), player.getX(), player.getY(), this);
+            g.drawImage(player.getImage(), p.getX(), p.getY(), this);
         }
 
         if (player.isDying()) {
@@ -247,12 +246,14 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
             int x = alien.getX();
             //If alien reaches right side of board
             if (x >= BOARD_WIDTH - BORDER_RIGHT && direction != -1) {
- 
-            	direction = -1;
+  
                 Iterator i1 = aliens.iterator();
                 while (i1.hasNext()) {
                     Alien a2 = (Alien) i1.next();
-                    a2.setY(a2.getY() + GO_DOWN);
+                    if(x == BOARD_WIDTH - BORDER_RIGHT) {
+                    	a2.setY(a2.getY() + GO_DOWN);
+                    	a2.setDirection(-1);
+                    }
                 }
             }
             //If alien reaches left side of board
@@ -291,48 +292,47 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
 
         // bombs
         Random generator = new Random();
-        
-        
-//        for (Alien alien: aliens) {
-//
-//            int shot = generator.nextInt(15);
-//            Alien.Bomb b = alien.getBomb();
-//
-//            if (shot == CHANCE && alien.isVisible() && b.isDestroyed()) {
-//
-//                b.setDestroyed(false);
-//                b.setX(alien.getX());
-//                b.setY(alien.getY());
-//            }
-//
-//            int bombX = b.getX();
-//            int bombY = b.getY();
-//            int playerX = player.getX();
-//            int playerY = player.getY();
-//
-//            if (player.isVisible() && !b.isDestroyed()) {
-//
-//                if (bombX >= (playerX)
-//                        && bombX <= (playerX + PLAYER_WIDTH)
-//                        && bombY >= (playerY)
-//                        && bombY <= (playerY + PLAYER_HEIGHT)) {
-//                    ImageIcon ii
-//                            = new ImageIcon(explImg);
-//                    player.setImage(ii.getImage());
-//                    player.setDying(true);
-//                    b.setDestroyed(true);
-//                }
-//            }
-//
-//            if (!b.isDestroyed()) {
-//                
-//                b.setY(b.getY() + 1);
-//                
-//                if (b.getY() >= GROUND - BOMB_HEIGHT) {
-//                    b.setDestroyed(true);
-//                }
-//            }
-//        }
+
+        for (Alien alien: aliens) {
+
+            int shot = generator.nextInt(15);
+            Alien.Bomb b = alien.getBomb();
+
+            if (shot == CHANCE && alien.isVisible() && b.isDestroyed()) {
+
+                b.setDestroyed(false);
+                b.setX(alien.getX());
+                b.setY(alien.getY());
+            }
+
+            int bombX = b.getX();
+            int bombY = b.getY();
+            int playerX = player.getX();
+            int playerY = player.getY();
+
+            if (player.isVisible() && !b.isDestroyed()) {
+
+                if (bombX >= (playerX)
+                        && bombX <= (playerX + PLAYER_WIDTH)
+                        && bombY >= (playerY)
+                        && bombY <= (playerY + PLAYER_HEIGHT)) {
+                    ImageIcon ii
+                            = new ImageIcon(explImg);
+                    player.setImage(ii.getImage());
+                    player.setDying(true);
+                    b.setDestroyed(true);
+                }
+            }
+
+            if (!b.isDestroyed()) {
+                
+                b.setY(b.getY() + 1);
+                
+                if (b.getY() >= GROUND - BOMB_HEIGHT) {
+                    b.setDestroyed(true);
+                }
+            }
+        }
     }
 
     @Override
