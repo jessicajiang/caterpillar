@@ -1,0 +1,22 @@
+package spaceinvaders;
+
+import javax.swing.ImageIcon;
+
+public class Mushroom extends Sprite {
+
+	private final String mushroomImg = "src/images/moon.png";
+
+    public Mushroom(int x, int y) {
+
+        initMushroom(x, y);
+    }
+
+    private void initMushroom(int x, int y) {
+
+        this.x = x;
+        this.y = y;
+
+        ImageIcon ii = new ImageIcon(mushroomImg);
+        setImage(ii.getImage());
+    }
+}

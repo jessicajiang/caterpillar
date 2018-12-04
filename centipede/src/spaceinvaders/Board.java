@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -36,14 +37,17 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
 
     private Dimension d;
     private ArrayList<Alien> aliens;
+    private ArrayList<Mushroom> mushrooms;
     private Player player;
     private Shot shot;
+    private Spider spider;
 
     private final int ALIEN_INIT_X = 150;
     private final int ALIEN_INIT_Y = 5;
 
-    private int direction = -1;
     private int deaths = 0;
+    private int lives = 4;
+    private int score = 0;
 
     private boolean ingame = true;
     private final String explImg = "src/images/fire.png";
@@ -77,16 +81,29 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
     }
 
     public void gameInit() {
-
+    	JLabel scoreLabel = new JLabel("Score: " + score);
+    	scoreLabel.setBounds(5, 5, 50, 10);
+    	
         aliens = new ArrayList<>();
 
         for (int i = 0; i < NUMBER_OF_ALIENS_TO_DESTROY; i++) {
-        	Alien alien = new Alien(ALIEN_INIT_X + 18 * i, ALIEN_INIT_Y + 18);
+        	Alien alien = new Alien(ALIEN_INIT_X + ALIEN_SIZE * i, ALIEN_INIT_Y + ALIEN_SIZE);
         	aliens.add(alien);
+        }
+        
+        mushrooms = new ArrayList<>();
+        
+        for (int i = 0; i < MUSHROOM_NUMBER; i++) {
+        	Random generator = new Random();
+        	int mushroomx = generator.nextInt(24);
+        	int mushroomy = generator.nextInt(20);
+        	Mushroom m = new Mushroom(20 + mushroomx*10, 15 + mushroomy*10);
+        	mushrooms.add(m);
         }
 
         player = new Player();
         shot = new Shot();
+        spider = new Spider(SPIDER_START_X, SPIDER_START_Y);
 
         if (animator == null || !ingame) {
 
@@ -98,20 +115,14 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
     public void drawAliens(Graphics g) {
 
         Iterator it = aliens.iterator();
-
         for (Alien alien: aliens) {
-
             if (alien.isVisible()) {
-
                 g.drawImage(alien.getImage(), alien.getX(), alien.getY(), this);
             }
-
             if (alien.isDying()) {
-
                 alien.die();
             }
         }
-        //split
     }
 
     public void drawPlayer(Graphics g) {
@@ -125,7 +136,6 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
         }
 
         if (player.isDying()) {
-
             player.die();
             ingame = false;
         }
@@ -134,22 +144,23 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
     public void drawShot(Graphics g) {
         
         if (shot.isVisible()) {
-            
             g.drawImage(shot.getImage(), shot.getX(), shot.getY(), this);
         }
     }
 
-    public void drawBombing(Graphics g) {
+    public void drawMushrooms(Graphics g) {
 
-        for (Alien a : aliens) {
-            
-            Alien.Bomb b = a.getBomb();
-
-            if (!b.isDestroyed()) {
-                
-                g.drawImage(b.getImage(), b.getX(), b.getY(), this);
+        for (Mushroom m : mushrooms) {
+            if (!m.isDestroyed()) {
+                g.drawImage(m.getImage(), m.getX(), m.getY(), this);
             }
         }
+    }
+    
+    public void drawSpider(Graphics g) {
+    	if (spider.isVisible()) {
+    		g.drawImage(spider.getImage(), spider.getX(), spider.getY(), this);
+    	}
     }
 
     @Override
@@ -161,12 +172,13 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
         g.setColor(Color.green);
 
         if (ingame) {
-
             g.drawLine(0, GROUND, BOARD_WIDTH, GROUND);
+            g.drawString("Score: " + score + " Lives: " + lives, 5, 15);
             drawAliens(g);
             drawPlayer(g);
             drawShot(g);
-            drawBombing(g);
+            drawMushrooms(g);
+            drawSpider(g);
         }
 
         Toolkit.getDefaultToolkit().sync();
@@ -197,7 +209,6 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
     public void animationCycle() {
 
         if (deaths == NUMBER_OF_ALIENS_TO_DESTROY) {
-
             ingame = false;
             message = "Game won!";
         }
@@ -221,14 +232,60 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
                             && shotX <= (alienX + ALIEN_WIDTH)
                             && shotY >= (alienY)
                             && shotY <= (alienY + ALIEN_HEIGHT)) {
-                        ImageIcon ii
-                                = new ImageIcon(explImg);
-                        alien.setImage(ii.getImage());
-                        alien.setDying(true);
-                        deaths++;
+                    	alien.isShot();
+                    	if(alien.getLives() == 0) {
+                    		score += 5;
+                    		alien.die();
+                    	} else {
+                    		score += 2;
+                    	}
+                    	alien.setDying(true);
                         shot.die();
                     }
                 }
+            }
+            //Shoot a Mushroom
+            for (Mushroom m: mushrooms) {
+
+                int mushroomX = m.getX();
+                int mushroomY = m.getY();
+
+                if (m.isVisible() && shot.isVisible()) {
+                    if (shotX >= (mushroomX)
+                            && shotX <= (mushroomX + ALIEN_WIDTH)
+                            && shotY >= (mushroomY)
+                            && shotY <= (mushroomY + ALIEN_HEIGHT)) {
+                    	m.isShot();
+                    	if(m.getLives() == 0) {
+                    		score += 5;
+                    		m.die();
+                    	} else {
+                    		score++;
+                    	}
+                        m.setDying(true);
+                        shot.die();
+                    }
+                }
+            }
+            //Shoot the Spider
+            int spiderX = spider.getX();
+            int spiderY = spider.getY();
+            
+            if(spider.isVisible() && shot.isVisible()) {
+            	if (shotX >= (spiderX)
+                        && shotX <= (spiderX + ALIEN_WIDTH)
+                        && shotY >= (spiderY)
+                        && shotY <= (spiderY + ALIEN_HEIGHT)) {
+            		spider.isShot();
+            		if(spider.getLives() == 0) {
+            			score += 600;
+            			spider.die();
+            		} else {
+            			score += 100;
+            		}
+            		spider.setDying(true);
+            		shot.die();
+            	}
             }
 
             int y = shot.getY();
@@ -241,62 +298,131 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
             }
         }
 
-        // aliens
-
+        // alien movement
         for (Alien alien: aliens) {
-            int x = alien.getX();
-            //If alien reaches right side of board
-            if (x >= BOARD_WIDTH - BORDER_RIGHT && direction != -1) {
- 
-            	direction = -1;
-                Iterator i1 = aliens.iterator();
-                while (i1.hasNext()) {
-                    Alien a2 = (Alien) i1.next();
-                    a2.setY(a2.getY() + GO_DOWN);
-                }
-            }
-            //If alien reaches left side of board
-            if (x <= BORDER_LEFT && direction != 1) {
-
-                direction = 1;
-
-                Iterator i2 = aliens.iterator();
-
-                while (i2.hasNext()) {
-
-                    Alien a = (Alien) i2.next();
-                    a.setY(a.getY() + GO_DOWN);
-                }
-            }
+        	alien.act();
+        	int alienx = alien.getX();
+            int alieny = alien.getY();
+            //5 points for going back and forth and not going down further when it enters the top of the player area.
+            if(alieny >= GROUND - ALIEN_HEIGHT) {
+            	if ((alienx >= BOARD_WIDTH - 2 * ALIEN_WIDTH) && alien.getDirection() != -1) {
+            		alien.setDirection(-1);
+            	}
+            	if (alienx <= BORDER_LEFT && alien.getDirection() != 1) {
+	            	alien.setDirection(1);
+	            }
+            } //move the alien down
+            else {
+	            if ((alienx >= BOARD_WIDTH - 2 * ALIEN_WIDTH) && alien.getDirection() != -1) {
+	            	alien.collision();
+	            }
+	            if (alienx <= BORDER_LEFT && alien.getDirection() != 1) {
+	            	alien.collision();
+	            }
+	            //Not that efficient but oh well
+	            for (Mushroom m: mushrooms) {
+	            	int mushroomx = m.getX();
+	            	int mushroomy = m.getY();
+	            	if (alien.isVisible() && m.isVisible()) {
+	            		if (mushroomx >= (alienx) && mushroomx <= (alienx + ALIEN_WIDTH) && 
+	            				mushroomy >= (alieny) && mushroomy <= (alieny + ALIEN_HEIGHT)) {
+	            			alien.collision();
+	            		}
+	            	}
+	            }
         }
-
-        Iterator<Alien> it = aliens.iterator();
-
-        while (it.hasNext()) {
-            
-            Alien alien = (Alien) it.next();
-            
-            if (alien.isVisible()) {
-
-                int y = alien.getY();
-
-                if (y > GROUND - ALIEN_HEIGHT) {
-                    ingame = false;
-                    message = "Invasion!";
+            //end game
+            int playerX = player.getX();
+            int playerY = player.getY();
+            if (alien.isVisible() && player.isVisible()) {
+                if (playerX >= (alienx)
+                        && playerX <= (alienx + ALIEN_WIDTH)
+                        && playerY >= (alieny)
+                        && playerY <= (alieny + ALIEN_HEIGHT)) {
+                    shot.die();
+                    player.die();
+                    lives--;
+                    if(lives == 0) {
+                    	ingame = false;
+                    }
+                    restart();
                 }
-
-                alien.act(direction);
             }
+            
         }
-
-        // bombs
+        //spider
         Random generator = new Random();
+        boolean setNewDirection = false;
+
+        int spiderX = spider.getX();
+        int spiderY = spider.getY();
+        int curDir = spider.getDirection();
+        int movesSinceLastChange = spider.getMovesSinceLastChange();
+
+        if(curDir == UP_RIGHT) {
+        	spider.setX(spiderX + 10);
+        	spider.setY(spiderY - 10);
+        	System.out.println("upright");
+        } else if (curDir == DOWN_RIGHT) {
+        	spider.setX(spiderX + 1);
+        	spider.setY(spiderY + 1);
+        	System.out.println("downright");
+        } else if (curDir == UP_LEFT) {
+        	spider.setX(spiderX - 1);
+        	spider.setY(spiderY - 1);
+        	System.out.println("upleft");
+        } else if (curDir == DOWN_LEFT) {
+        	spider.setX(spiderX - 1);
+        	spider.setY(spiderY + 1);
+        	System.out.println("downleft");
+        } else if (curDir == UP) {
+        	spider.setY(spiderY - 1);
+        	System.out.println("up");
+        } else {
+        	spider.setY(spiderY + 1);
+        	System.out.println("down");
+        }
+
+        spider.setMovesSinceLastChange(movesSinceLastChange++);
         
+        if ((spiderY >= GROUND - ALIEN_HEIGHT) || (spiderX >= BOARD_WIDTH - 2 * ALIEN_WIDTH) 
+        		|| (spiderX <= BORDER_LEFT + ALIEN_WIDTH) || (spiderY <= BORDER_LEFT + ALIEN_SIZE)) {
+        	setNewDirection = true;
+        }
+        // as the spider approaches 5 moves on its current path, increase odds of changing
+        setNewDirection = (setNewDirection || generator.nextInt(6-movesSinceLastChange) == 0);
+
+        if(setNewDirection) {
+        	spider.setDirection(generator.nextInt(6)); 
+        	spider.setMovesSinceLastChange(0);
+        }
+        
+        //Player collision with spider
+        int playerX = player.getX();
+        int playerY = player.getY();
+        if (spider.isVisible() && player.isVisible()) {
+            if (playerX >= (spiderX)
+                    && playerX <= (spiderX + ALIEN_WIDTH)
+                    && playerY >= (spiderY)
+                    && playerY <= (spiderY + ALIEN_HEIGHT)) {
+                shot.die();
+                player.die();
+                lives--;
+                //restart();
+                if(lives == 0) {
+                	ingame = false;
+                }
+            }
+        }
+        
+        if(aliens.size() == 0) {
+        	restart();
+        	score += 600;
+        }
         
 //        for (Alien alien: aliens) {
 //
 //            int shot = generator.nextInt(15);
-//            Alien.Bomb b = alien.getBomb();
 //
 //            if (shot == CHANCE && alien.isVisible() && b.isDestroyed()) {
 //
@@ -334,6 +460,9 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
 //            }
 //        }
     }
+    public void restart() {
+    	
+    }
 
     @Override
     public void run() {
@@ -365,35 +494,6 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
 
         gameOver();
     }
-
-//    private class TAdapter extends KeyAdapter {
-//
-//        @Override
-//        public void keyReleased(KeyEvent e) {
-//
-//            player.keyReleased(e);
-//        }
-//
-//        @Override
-//        public void keyPressed(KeyEvent e) {
-//
-//            player.keyPressed(e);
-//
-//            int x = player.getX();
-//            int y = player.getY();
-//
-//            int key = e.getKeyCode();
-//
-//            if (key == KeyEvent.VK_SPACE) {
-//                
-//                if (ingame) {
-//                    if (!shot.isVisible()) {
-//                        shot = new Shot(x, y);
-//                    }
-//                }
-//            }
-//        }
-//    }
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -429,20 +529,18 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		System.out.println("Mouse Exited");
+		//System.out.println("Mouse Exited");
 		
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		System.out.println("why tho");
+		//System.out.println("why tho");
 		
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		//Point2D p = MouseInfo.getPointerInfo().getLocation();
-		//System.out.println(e.getPoint());
 		
 	}
 }

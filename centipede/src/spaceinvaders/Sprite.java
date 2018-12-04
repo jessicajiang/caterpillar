@@ -6,7 +6,6 @@ public class Sprite {
 
     private boolean visible;
     private Image image;
-    private int direction;
     protected int x;
     protected int y;
     protected boolean dying;
@@ -60,14 +59,6 @@ public class Sprite {
     public int getX() {
     
         return x;
-    }
-    
-    public int getDirection() {
-    	return direction;
-    }
-    
-    public void setDirection(int direction) {
-    	this.direction = direction;
     }
 
     public void setDying(boolean dying) {

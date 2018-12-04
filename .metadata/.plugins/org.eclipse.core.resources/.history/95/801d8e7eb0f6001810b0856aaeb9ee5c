@@ -1,0 +1,35 @@
+package spaceinvaders;
+
+import javax.swing.ImageIcon;
+
+public class Mushroom extends Sprite {
+
+    private int direction;
+    private final String alienImg = "src/images/moon.png";
+
+    public Alien(int x, int y) {
+
+        initAlien(x, y);
+    }
+
+    private void initAlien(int x, int y) {
+
+        this.x = x;
+        this.y = y;
+
+        bomb = new Bomb(x, y);
+        ImageIcon ii = new ImageIcon(alienImg);
+        setImage(ii.getImage());
+    }
+    
+    public int getDirection() {
+    	return this.direction;
+    }
+
+    public void setDirection(int direction) {
+    	this.direction = direction;
+    }
+    
+    public void act(int direction) {
+    	this.x += direction;
+    }

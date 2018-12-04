@@ -1,0 +1,60 @@
+package spaceinvaders;
+
+import javax.swing.ImageIcon;
+
+public class Spider extends Sprite {
+
+	private final String SpiderImg = "src/images/fullheart.png";
+	private final String halfHeart = "src/images/halfheart.png";
+	private boolean destroyed;
+	private int lives = 2;
+	private int direction = 1;
+
+    public Spider(int x, int y) {
+        initSpider(x, y);
+    }
+
+    private void initSpider(int x, int y) {
+
+        this.x = x;
+        this.y = y;
+
+        ImageIcon ii = new ImageIcon(SpiderImg);
+        setImage(ii.getImage());
+    }
+    
+    public void setDestroyed(boolean destroyed) {
+        
+        this.destroyed = destroyed;
+    }
+
+    public boolean isDestroyed() {
+    
+        return destroyed;
+    }
+    
+    public void setDirection(int direction) {
+    	this.direction = direction;
+    }
+    
+    public int getDirection() {
+    	return this.direction;
+    }
+    
+    public int getLives() {
+    	return this.lives;
+    }
+    
+    public void isShot() {
+    	this.lives--;
+    	if (this.lives == 0) {
+    		setDestroyed(true);
+    	} else if (this.lives == 1) {
+    		ImageIcon ii = new ImageIcon(halfHeart);
+    		setImage(ii.getImage());
+    	} else {
+    		System.out.println("Error");
+    	}
+    }
+}
+

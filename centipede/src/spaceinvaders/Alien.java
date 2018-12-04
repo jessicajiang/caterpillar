@@ -5,7 +5,10 @@ import javax.swing.ImageIcon;
 public class Alien extends Sprite {
 
     private Bomb bomb;
+    private int direction = -1;
     private final String alienImg = "src/images/snake.png";
+    private final String halfPlant = "src/images/halfPlant.png";
+    private int lives = 2;
 
     public Alien(int x, int y) {
 
@@ -21,10 +24,38 @@ public class Alien extends Sprite {
         ImageIcon ii = new ImageIcon(alienImg);
         setImage(ii.getImage());
     }
+    
+    public int getDirection() {
+    	return this.direction;
+    }
 
-    public void act(int direction) {
-        
-        this.x += direction;
+    public void setDirection(int direction) {
+    	this.direction = direction;
+    }
+    
+    public void act() {
+    	this.x += this.direction;
+    }
+    
+    public void collision() {
+    	this.y += 10;
+    	this.x += direction * 10;
+    	this.direction = -direction;
+    }
+    
+    public int getLives() {
+    	return this.lives;
+    }
+    
+    public void isShot() {
+    	this.lives--;
+    	if (this.lives == 0) {
+    	} else if (this.lives == 1) {
+    		ImageIcon ii = new ImageIcon(halfPlant);
+    		setImage(ii.getImage());
+    	} else {
+    		System.out.println("Error");
+    	}
     }
 
     public Bomb getBomb() {
