@@ -43,7 +43,7 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
     private Spider spider;
 
     private final int ALIEN_INIT_X = 150;
-    private final int ALIEN_INIT_Y = 3;
+    private final int ALIEN_INIT_Y = 5;
 
     private int deaths = 0;
     private int lives = 4;
@@ -81,6 +81,8 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
     }
 
     public void gameInit() {
+//    	JLabel scoreLabel = new JLabel("Score: " + score);
+//    	scoreLabel.setBounds(5, 5, 50, 10);
     	
         aliens = new ArrayList<>();
 
@@ -204,10 +206,10 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
     }
 
     public void animationCycle() {
-
-    	if (lives == 0) {
-    		ingame = false;
-    	}
+//        if (deaths == NUMBER_OF_ALIENS_TO_DESTROY) {
+//            ingame = false;
+//            message = "Game won!";
+//        }
 
         // player
         player.act();
@@ -421,27 +423,30 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
         }
 
     }
+//    public static synchronized void playSound() {
+//    	  new Thread(new Runnable() {
+//    	  // The wrapper thread is unnecessary, unless it blocks on the
+//    	  // Clip finishing; see comments.
+//    	    public void run() {
+//    	      try {
+//    	        Clip clip = AudioSystem.getClip();
+//    	        AudioInputStream inputStream = AudioSystem.getAudioInputStream(
+//    	          Main.class.getResourceAsStream("/Users/jessicajiang/Senior/ECE\ 30862/Centipede/centipede/bin/pewpew1final.wav");
+//    	        clip.open(inputStream);
+//    	        clip.start(); 
+//    	      } catch (Exception e) {
+//    	        System.err.println(e.getMessage());
+//    	      }
+//    	    }
+//    	  }).start();
+//    	}
     
     public void restart() {
+    	//repaint();
     	for (Mushroom m: mushrooms) {
-    		if (m.getLives() <= 3) {
-    			score += 10;
-    		}
     		m.reset();
     	}
-    	if(spider.isVisible()) {
-    		spider.die();
-    	}
-    	if (aliens.size() != 0) {
-    		aliens.clear();
-    		for (int i = 0; i < NUMBER_OF_ALIENS_TO_DESTROY; i++) {
-            	Alien alien = new Alien(ALIEN_INIT_X + ALIEN_SIZE * i, ALIEN_INIT_Y + ALIEN_SIZE);
-            	aliens.add(alien);
-            }
-    	}
-    	repaint();
     	animationCycle();
-    	System.out.println("a life was lost");
     }
 
     @Override
@@ -484,26 +489,26 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
                 shot = new Shot(x, y);
             }
         }
-		//System.out.println("Mouse Clicked");
+		System.out.println("Mouse Clicked");
 		Pew p = new Pew();
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		//eventOutput("Mouse pressed (# of clicks: " + e.getClickCount() + ")", e);
-		//System.out.println("Mouse Pressed");
+		System.out.println("Mouse Pressed");
 		
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		//System.out.println("Mouse Released");
+		System.out.println("Mouse Released");
 		
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		//System.out.println("Mouse Entered");
+		System.out.println("Mouse Entered");
 		
 	}
 

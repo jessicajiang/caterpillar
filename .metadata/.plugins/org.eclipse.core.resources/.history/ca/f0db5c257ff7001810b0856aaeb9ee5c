@@ -43,7 +43,7 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
     private Spider spider;
 
     private final int ALIEN_INIT_X = 150;
-    private final int ALIEN_INIT_Y = 3;
+    private final int ALIEN_INIT_Y = 5;
 
     private int deaths = 0;
     private int lives = 4;
@@ -204,7 +204,10 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
     }
 
     public void animationCycle() {
-
+//        if (deaths == NUMBER_OF_ALIENS_TO_DESTROY) {
+//            ingame = false;
+//            message = "Game won!";
+//        }
     	if (lives == 0) {
     		ingame = false;
     	}
@@ -421,12 +424,26 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
         }
 
     }
+//    public static synchronized void playSound() {
+//    	  new Thread(new Runnable() {
+//    	  // The wrapper thread is unnecessary, unless it blocks on the
+//    	  // Clip finishing; see comments.
+//    	    public void run() {
+//    	      try {
+//    	        Clip clip = AudioSystem.getClip();
+//    	        AudioInputStream inputStream = AudioSystem.getAudioInputStream(
+//    	          Main.class.getResourceAsStream("/Users/jessicajiang/Senior/ECE\ 30862/Centipede/centipede/bin/pewpew1final.wav");
+//    	        clip.open(inputStream);
+//    	        clip.start(); 
+//    	      } catch (Exception e) {
+//    	        System.err.println(e.getMessage());
+//    	      }
+//    	    }
+//    	  }).start();
+//    	}
     
     public void restart() {
     	for (Mushroom m: mushrooms) {
-    		if (m.getLives() <= 3) {
-    			score += 10;
-    		}
     		m.reset();
     	}
     	if(spider.isVisible()) {
