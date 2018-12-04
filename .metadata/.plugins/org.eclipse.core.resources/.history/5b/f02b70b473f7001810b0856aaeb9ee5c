@@ -96,8 +96,8 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
         for (int i = 0; i < MUSHROOM_NUMBER; i++) {
         	Random generator = new Random();
         	int mushroomx = generator.nextInt(24);
-        	int mushroomy = generator.nextInt(19);
-        	Mushroom m = new Mushroom(20 + mushroomx*10, 25 + mushroomy*10);
+        	int mushroomy = generator.nextInt(20);
+        	Mushroom m = new Mushroom(20 + mushroomx*10, 15 + mushroomy*10);
         	mushrooms.add(m);
         }
 
@@ -357,46 +357,40 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
         int curDir = spider.getDirection();
         int movesSinceLastChange = spider.getMovesSinceLastChange();
 
-        int randDist = generator.nextInt(8);
         if(curDir == UP_RIGHT) {
-        	spider.setX(spiderX + randDist);
-        	spider.setY(spiderY - randDist);
+        	spider.setX(spiderX + 10);
+        	spider.setY(spiderY - 10);
         	//System.out.println("upright");
         } else if (curDir == DOWN_RIGHT) {
-        	spider.setX(spiderX + randDist);
-        	spider.setY(spiderY + randDist);
+        	spider.setX(spiderX + 1);
+        	spider.setY(spiderY + 1);
         	//System.out.println("downright");
         } else if (curDir == UP_LEFT) {
-        	spider.setX(spiderX - randDist);
-        	spider.setY(spiderY - randDist);
+        	spider.setX(spiderX - 1);
+        	spider.setY(spiderY - 1);
         	//System.out.println("upleft");
         } else if (curDir == DOWN_LEFT) {
-        	spider.setX(spiderX - randDist);
-        	spider.setY(spiderY + randDist);
+        	spider.setX(spiderX - 1);
+        	spider.setY(spiderY + 1);
         	//System.out.println("downleft");
         } else if (curDir == UP) {
-        	spider.setY(spiderY - randDist);
+        	spider.setY(spiderY - 1);
         	//System.out.println("up");
         } else {
-        	spider.setY(spiderY + randDist);
+        	spider.setY(spiderY + 1);
         	//System.out.println("down");
         }
 
         spider.setMovesSinceLastChange(movesSinceLastChange++);
         
-        if (spiderY >= BOARD_HEIGHT - 2 * ALIEN_HEIGHT) { //Bottom 
-        	spider.setDirection(4);
-        } if (spiderX >= BOARD_WIDTH - 2 * ALIEN_WIDTH) { //Right
-        	spider.setDirection(2);
-        } if (spiderX <= BORDER_LEFT + ALIEN_WIDTH) { //Left
-        	spider.setDirection(0);
-        } if (spiderY <= BORDER_LEFT + ALIEN_SIZE) { //Top
-        	spider.setDirection(5);
+        if ((spiderY >= GROUND - ALIEN_HEIGHT) || (spiderX >= BOARD_WIDTH - 2 * ALIEN_WIDTH) 
+        		|| (spiderX <= BORDER_LEFT + ALIEN_WIDTH) || (spiderY <= BORDER_LEFT + ALIEN_SIZE)) {
+        	setNewDirection = true;
         }
-       
         // as the spider approaches 5 moves on its current path, increase odds of changing
+        setNewDirection = (setNewDirection || generator.nextInt(6-movesSinceLastChange) == 0);
 
-        if(generator.nextInt(6-movesSinceLastChange) == 0) {
+        if(setNewDirection) {
         	spider.setDirection(generator.nextInt(6)); 
         	spider.setMovesSinceLastChange(0);
         }

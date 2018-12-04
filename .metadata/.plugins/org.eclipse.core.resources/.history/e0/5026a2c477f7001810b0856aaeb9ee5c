@@ -96,7 +96,7 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
         for (int i = 0; i < MUSHROOM_NUMBER; i++) {
         	Random generator = new Random();
         	int mushroomx = generator.nextInt(24);
-        	int mushroomy = generator.nextInt(19);
+        	int mushroomy = generator.nextInt(20);
         	Mushroom m = new Mushroom(20 + mushroomx*10, 25 + mushroomy*10);
         	mushrooms.add(m);
         }
