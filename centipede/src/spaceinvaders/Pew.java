@@ -19,7 +19,7 @@ public class Pew{
       try {
          // Open an audio input stream.
     	  AudioInputStream audioIn = AudioSystem.getAudioInputStream((new File("/Users/jessicajiang/Senior/ECE 30862/Centipede/centipede/src/pewpew1final.wav")).getAbsoluteFile());
-    	  //System.out.println(audioIn == null);
+    	  System.out.println(audioIn == null);
          // Get a sound clip resource.
          Clip clip = AudioSystem.getClip();
          // Open audio clip and load samples from the audio input stream.

@@ -50,6 +50,7 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
     private int score = 0;
 
     private boolean ingame = true;
+    private boolean shouldRestart = false;
     private final String explImg = "src/images/fire.png";
     private String message = "Game Over";
 
@@ -65,7 +66,7 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
         //addKeyListener(new TAdapter());
         addMouseListener(this);
         addMouseMotionListener(this);
-        		
+                
         setFocusable(true);
         d = new Dimension(BOARD_WIDTH, BOARD_HEIGHT);
 
@@ -81,22 +82,22 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
     }
 
     public void gameInit() {
-    	
+        
         aliens = new ArrayList<>();
 
         for (int i = 0; i < NUMBER_OF_ALIENS_TO_DESTROY; i++) {
-        	Alien alien = new Alien(ALIEN_INIT_X + ALIEN_SIZE * i, ALIEN_INIT_Y + ALIEN_SIZE);
-        	aliens.add(alien);
+            Alien alien = new Alien(ALIEN_INIT_X + ALIEN_SIZE * i, ALIEN_INIT_Y + ALIEN_SIZE);
+            aliens.add(alien);
         }
         
         mushrooms = new ArrayList<>();
         
         for (int i = 0; i < MUSHROOM_NUMBER; i++) {
-        	Random generator = new Random();
-        	int mushroomx = generator.nextInt(24);
-        	int mushroomy = generator.nextInt(19);
-        	Mushroom m = new Mushroom(20 + mushroomx*10, 25 + mushroomy*10);
-        	mushrooms.add(m);
+            Random generator = new Random();
+            int mushroomx = generator.nextInt(24);
+            int mushroomy = generator.nextInt(19);
+            Mushroom m = new Mushroom(mushroomx*10, mushroomy*10);
+            mushrooms.add(m);
         }
 
         player = new Player();
@@ -126,10 +127,10 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
     public void drawPlayer(Graphics g) {
 
         if (player.isVisible()) {
-        	Point p = MouseInfo.getPointerInfo().getLocation();
-        	SwingUtilities.convertPointFromScreen(p, this);
-        	player.setX((int)p.getX());
-        	player.setY((int)p.getY());
+            Point p = MouseInfo.getPointerInfo().getLocation();
+            SwingUtilities.convertPointFromScreen(p, this);
+            player.setX((int)p.getX());
+            player.setY((int)p.getY());
             g.drawImage(player.getImage(), (int)p.getX(), (int)p.getY(), this);
         }
 
@@ -155,9 +156,9 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
     }
     
     public void drawSpider(Graphics g) {
-    	if (spider.isVisible()) {
-    		g.drawImage(spider.getImage(), spider.getX(), spider.getY(), this);
-    	}
+        if (spider.isVisible()) {
+            g.drawImage(spider.getImage(), spider.getX(), spider.getY(), this);
+        }
     }
 
     @Override
@@ -205,9 +206,9 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
 
     public void animationCycle() {
 
-    	if (lives == 0) {
-    		ingame = false;
-    	}
+        if (lives == 0) {
+            ingame = false;
+        }
 
         // player
         player.act();
@@ -227,13 +228,13 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
                             && shotX <= (alienX + ALIEN_WIDTH)
                             && shotY >= (alienY)
                             && shotY <= (alienY + ALIEN_HEIGHT)) {
-                    	alien.isShot();
-                    	if(alien.getLives() == 0) {
-                    		score += 5;
-                    		alien.setDying(true);
-                    	} else {
-                    		score += 2;
-                    	}
+                        alien.isShot();
+                        if(alien.getLives() == 0) {
+                            score += 5;
+                            alien.setDying(true);
+                        } else {
+                            score += 2;
+                        }
                         shot.die();
                     }
                 }
@@ -249,13 +250,13 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
                             && shotX <= (mushroomX + ALIEN_WIDTH)
                             && shotY >= (mushroomY)
                             && shotY <= (mushroomY + ALIEN_HEIGHT)) {
-                    	m.isShot();
-                    	if(m.getLives() == 0) {
-                    		score += 5;
-                    		m.die();
-                    	} else {
-                    		score++;
-                    	}
+                        m.isShot();
+                        if(m.getLives() == 0) {
+                            score += 5;
+                            m.die();
+                        } else {
+                            score++;
+                        }
                         m.setDying(true);
                         shot.die();
                     }
@@ -266,20 +267,20 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
             int spiderY = spider.getY();
             
             if(spider.isVisible() && shot.isVisible()) {
-            	if (shotX >= (spiderX)
+                if (shotX >= (spiderX)
                         && shotX <= (spiderX + ALIEN_WIDTH)
                         && shotY >= (spiderY)
                         && shotY <= (spiderY + ALIEN_HEIGHT)) {
-            		spider.isShot();
-            		if(spider.getLives() == 0) {
-            			score += 600;
-            			spider.die();
-            		} else {
-            			score += 100;
-            		}
-            		spider.setDying(true);
-            		shot.die();
-            	}
+                    spider.isShot();
+                    if(spider.getLives() == 0) {
+                        score += 600;
+                        spider.die();
+                    } else {
+                        score += 100;
+                    }
+                    spider.setDying(true);
+                    shot.die();
+                }
             }
 
             int y = shot.getY();
@@ -294,36 +295,36 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
 
         // alien movement
         for (Alien alien: aliens) {
-        	alien.act();
-        	int alienx = alien.getX();
+            alien.act();
+            int alienx = alien.getX();
             int alieny = alien.getY();
             //5 points for going back and forth and not going down further when it enters the top of the player area.
             if(alieny >= GROUND - ALIEN_HEIGHT) {
-            	if ((alienx >= BOARD_WIDTH - 2 * ALIEN_WIDTH) && alien.getDirection() != -1) {
-            		alien.setDirection(-1);
-            	}
-            	if (alienx <= BORDER_LEFT && alien.getDirection() != 1) {
-	            	alien.setDirection(1);
-	            }
+                if ((alienx >= BOARD_WIDTH - 2 * ALIEN_WIDTH) && alien.getDirection() != -1) {
+                    alien.setDirection(-1);
+                }
+                if (alienx <= BORDER_LEFT && alien.getDirection() != 1) {
+                    alien.setDirection(1);
+                }
             } //move the alien down
             else {
-	            if ((alienx >= BOARD_WIDTH - 2 * ALIEN_WIDTH) && alien.getDirection() != -1) {
-	            	alien.collision();
-	            }
-	            if (alienx <= BORDER_LEFT && alien.getDirection() != 1) {
-	            	alien.collision();
-	            }
-	            //Not that efficient but oh well
-	            for (Mushroom m: mushrooms) {
-	            	int mushroomx = m.getX();
-	            	int mushroomy = m.getY();
-	            	if (alien.isVisible() && m.isVisible()) {
-	            		if (mushroomx >= (alienx) && mushroomx <= (alienx + ALIEN_WIDTH) && 
-	            				mushroomy >= (alieny) && mushroomy <= (alieny + ALIEN_HEIGHT)) {
-	            			alien.collision();
-	            		}
-	            	}
-	            }
+                if ((alienx >= BOARD_WIDTH - 2 * ALIEN_WIDTH) && alien.getDirection() != -1) {
+                    alien.collision();
+                }
+                if (alienx <= BORDER_LEFT && alien.getDirection() != 1) {
+                    alien.collision();
+                }
+                //Not that efficient but oh well
+                for (Mushroom m: mushrooms) {
+                    int mushroomx = m.getX();
+                    int mushroomy = m.getY();
+                    if (alien.isVisible() && m.isVisible()) {
+                        if (mushroomx >= (alienx) && mushroomx <= (alienx + ALIEN_WIDTH) && 
+                                mushroomy >= (alieny) && mushroomy <= (alieny + ALIEN_HEIGHT)) {
+                            alien.collision();
+                        }
+                    }
+                }
         }
             //Player and Alien Collide
             int playerX = player.getX();
@@ -337,7 +338,7 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
                     player.die();
                     lives--;
                     if(lives == 0) {
-                    	ingame = false;
+                        ingame = false;
                     }
                     restart();
                 }
@@ -355,46 +356,46 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
 
         int randDist = generator.nextInt(8);
         if(curDir == UP_RIGHT) {
-        	spider.setX(spiderX + randDist);
-        	spider.setY(spiderY - randDist);
-        	//System.out.println("upright");
+            spider.setX(spiderX + randDist);
+            spider.setY(spiderY - randDist);
+            //System.out.println("upright");
         } else if (curDir == DOWN_RIGHT) {
-        	spider.setX(spiderX + randDist);
-        	spider.setY(spiderY + randDist);
-        	//System.out.println("downright");
+            spider.setX(spiderX + randDist);
+            spider.setY(spiderY + randDist);
+            //System.out.println("downright");
         } else if (curDir == UP_LEFT) {
-        	spider.setX(spiderX - randDist);
-        	spider.setY(spiderY - randDist);
-        	//System.out.println("upleft");
+            spider.setX(spiderX - randDist);
+            spider.setY(spiderY - randDist);
+            //System.out.println("upleft");
         } else if (curDir == DOWN_LEFT) {
-        	spider.setX(spiderX - randDist);
-        	spider.setY(spiderY + randDist);
-        	//System.out.println("downleft");
+            spider.setX(spiderX - randDist);
+            spider.setY(spiderY + randDist);
+            //System.out.println("downleft");
         } else if (curDir == UP) {
-        	spider.setY(spiderY - randDist);
-        	//System.out.println("up");
+            spider.setY(spiderY - randDist);
+            //System.out.println("up");
         } else {
-        	spider.setY(spiderY + randDist);
-        	//System.out.println("down");
+            spider.setY(spiderY + randDist);
+            //System.out.println("down");
         }
 
         spider.setMovesSinceLastChange(movesSinceLastChange++);
         
         if (spiderY >= BOARD_HEIGHT - 2 * ALIEN_HEIGHT) { //Bottom 
-        	spider.setDirection(4);
+            spider.setDirection(4);
         } if (spiderX >= BOARD_WIDTH - 2 * ALIEN_WIDTH) { //Right
-        	spider.setDirection(2);
+            spider.setDirection(2);
         } if (spiderX <= BORDER_LEFT + ALIEN_WIDTH) { //Left
-        	spider.setDirection(0);
+            spider.setDirection(0);
         } if (spiderY <= BORDER_LEFT + ALIEN_SIZE) { //Top
-        	spider.setDirection(5);
+            spider.setDirection(5);
         }
        
         // as the spider approaches 5 moves on its current path, increase odds of changing
 
         if(generator.nextInt(6-movesSinceLastChange) == 0) {
-        	spider.setDirection(generator.nextInt(6)); 
-        	spider.setMovesSinceLastChange(0);
+            spider.setDirection(generator.nextInt(6)); 
+            spider.setMovesSinceLastChange(0);
         }
         
         //Player collision with spider
@@ -409,39 +410,39 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
                 player.die();
                 lives--;
                 if(lives == 0) {
-                	ingame = false;
+                    ingame = false;
                 }
                 restart();
             }
         }
         //Restart 
         if(aliens.size() == 0) {
-        	score += 600;
-        	restart();
+            score += 600;
+            restart();
         }
 
     }
     
     public void restart() {
-    	for (Mushroom m: mushrooms) {
-    		if (m.getLives() <= 3) {
-    			score += 10;
-    		}
-    		m.reset();
-    	}
-    	if(spider.isVisible()) {
-    		spider.die();
-    	}
-    	if (aliens.size() != 0) {
-    		aliens.clear();
-    		for (int i = 0; i < NUMBER_OF_ALIENS_TO_DESTROY; i++) {
-            	Alien alien = new Alien(ALIEN_INIT_X + ALIEN_SIZE * i, ALIEN_INIT_Y + ALIEN_SIZE);
-            	aliens.add(alien);
+        for (Mushroom m: mushrooms) {
+            if (m.getLives() <= 3) {
+                score += 10;
             }
-    	}
-    	repaint();
-    	animationCycle();
-    	System.out.println("a life was lost");
+            m.reset();
+        }
+//      if(spider.isVisible()) {
+//          spider.die();
+//      }
+//      if (aliens.size() != 0) {
+//          aliens.clear();
+//          for (int i = 0; i < NUMBER_OF_ALIENS_TO_DESTROY; i++) {
+//              Alien alien = new Alien(ALIEN_INIT_X + ALIEN_SIZE * i, ALIEN_INIT_Y + ALIEN_SIZE);
+//              aliens.add(alien);
+//            }
+//      }
+//      repaint();
+        //animationCycle();
+        System.out.println("a life was lost");
     }
 
     @Override
@@ -475,52 +476,52 @@ public class Board extends JPanel implements Runnable, Commons, MouseListener, M
         gameOver();
     }
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		int x = player.getX();
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        int x = player.getX();
         int y = player.getY();
-		if (ingame) {
+        if (ingame) {
             if (!shot.isVisible()) {
                 shot = new Shot(x, y);
             }
         }
-		//System.out.println("Mouse Clicked");
-		Pew p = new Pew();
-	}
+        //System.out.println("Mouse Clicked");
+        Pew p = new Pew();
+    }
 
-	@Override
-	public void mousePressed(MouseEvent e) {
-		//eventOutput("Mouse pressed (# of clicks: " + e.getClickCount() + ")", e);
-		//System.out.println("Mouse Pressed");
-		
-	}
+    @Override
+    public void mousePressed(MouseEvent e) {
+        //eventOutput("Mouse pressed (# of clicks: " + e.getClickCount() + ")", e);
+        //System.out.println("Mouse Pressed");
+        
+    }
 
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		//System.out.println("Mouse Released");
-		
-	}
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        //System.out.println("Mouse Released");
+        
+    }
 
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		//System.out.println("Mouse Entered");
-		
-	}
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        //System.out.println("Mouse Entered");
+        
+    }
 
-	@Override
-	public void mouseExited(MouseEvent e) {
-		//System.out.println("Mouse Exited");
-		
-	}
+    @Override
+    public void mouseExited(MouseEvent e) {
+        //System.out.println("Mouse Exited");
+        
+    }
 
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		//System.out.println("why tho");
-		
-	}
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        //System.out.println("why tho");
+        
+    }
 
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		
-	}
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        
+    }
 }
