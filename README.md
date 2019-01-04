@@ -1,2 +1,2 @@
-# caterpillar
-Caterpillar game for ECE 30862
+# Caterpillar
+Centipede Remake of Atari Game
